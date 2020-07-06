@@ -12,11 +12,11 @@ gem 'rails', '~> 6.0.3', '>= 6.0.3.2'
 # hash algorithm
 gem 'bcrypt',         '3.1.12'
 # Generate fake data
-# gem 'faker',          '2.13.0'
+gem 'faker',          '2.13.0'
 # Pagination library
-# gem 'will_paginate',              '3.3.0'
+gem 'will_paginate',              '3.3.0'
 # Hooks into will_paginate to format the html to match Twitter Bootstrap styling
-# gem 'bootstrap-will_paginate', '1.0.0'
+gem 'bootstrap-will_paginate', '1.0.0'
 # Sass port of Bootstrap 2 and 3.
 gem 'bootstrap-sass', '3.4.1'
 # A Ruby/Rack web server built for concurrency
