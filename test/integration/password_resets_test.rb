@@ -61,18 +61,26 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
   end
 
   test "expired token" do
+    # パスワードリセット要求画面表示
     get new_password_reset_path
+    # パスワードリセット要求発行
     post password_resets_path,
          params: { password_reset: { email: @user.email } }
-
+    # User data取得
     @user = assigns(:user)
+    # パスワードリセット時間切れに設定
     @user.update_attribute(:reset_sent_at, 3.hours.ago)
+    # パスワードリセット実行
     patch password_reset_path(@user.reset_token),
           params: { email: @user.email,
                     user: { password:              "foobar",
                             password_confirmation: "foobar" } }
+    # レスポンスコード リダイレクト(300-399)
     assert_response :redirect
+    # リダイレクトにしたがって移動
     follow_redirect!
-    assert_match "expired", response.body
+    # メッセージが表示されているかチェックする
+    assert_match /expired/i, response.body
   end
+
 end

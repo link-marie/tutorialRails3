@@ -35,6 +35,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 
+gem 'carrierwave', '~> 2.0'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.4'

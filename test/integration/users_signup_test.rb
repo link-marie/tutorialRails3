@@ -27,8 +27,11 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
                                          password:              "password",
                                          password_confirmation: "password" } }
     end
+    # 配信されたメッセージが1つだけか
     assert_equal 1, ActionMailer::Base.deliveries.size
+    # インスタンス変数を取得
     user = assigns(:user)
+    # 有効化していないことを確認
     assert_not user.activated?
     # 有効化していない状態でログインしてみる
     log_in_as(user)
