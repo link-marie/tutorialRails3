@@ -1,5 +1,13 @@
 class User < ApplicationRecord
   has_many :microposts, dependent: :destroy
+  has_many :active_relationships, class_name:  "Relationship",
+                                  foreign_key: "follower_id",
+                                  dependent:   :destroy
+  has_many :passive_relationships, class_name:  "Relationship",
+                                  foreign_key: "followed_id",
+                                  dependent:   :destroy
+  has_many :following, through: :active_relationships, source: :followed
+  has_many :followers, through: :passive_relationships, source: :follower
   attr_accessor :remember_token
   attr_accessor :activation_token
   attr_accessor :reset_token
@@ -73,7 +81,48 @@ class User < ApplicationRecord
   end
 
   def feed
-    Micropost.where("user_id = ?", id)
+    <<-DOC 
+    # Micropost.where("user_id = ?", id)
+    DOC
+
+    <<-DOC
+    この方法では大量の followに対応できない
+    Micropost.where(
+      "user_id IN (?) OR user_id = ?"
+      , following_ids, id)
+    DOC
+
+    <<-DOC
+    上記をシンボルを使って書き換えたもの
+    Micropost.where(
+      "user_id IN (:following_ids) OR user_id = :user_id"
+      , following_ids: following_ids, user_id: id)
+    DOC
+
+    # SubSelectを作成して followしている idをリスト
+    following_ids = "SELECT followed_id FROM relationships
+        WHERE follower_id = :user_id"
+    not_following_ids = "SELECT followed_id FROM relationships
+        WHERE follower_id != :user_id"
+    # SubSelectは DB上で実行されるので効率化される
+    Micropost.where("user_id IN (#{following_ids})
+        OR user_id = :user_id", user_id: id)
+
+  end
+
+  # ユーザーをフォローする
+  def follow(other_user)
+    following << other_user
+  end
+
+  # ユーザーをフォロー解除する
+  def unfollow(other_user)
+    active_relationships.find_by(followed_id: other_user.id).destroy
+  end
+
+  # 現在のユーザーがフォローしてたらtrueを返す
+  def following?(other_user)
+    following.include?(other_user)
   end
 
 private
