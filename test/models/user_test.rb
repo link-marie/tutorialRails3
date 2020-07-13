@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
+
   def setup
     @user = User.new(name: "Example User", email: "user@example.com",
                      password: "foobar", password_confirmation: "foobar")
@@ -28,6 +29,15 @@ class UserTest < ActiveSupport::TestCase
   test "email should not be too long" do
     @user.email = "a" * 244 + "@example.com"
     assert_not @user.valid?
+  end
+
+  test "email validation should accept valid addresses" do
+    valid_addresses = %w[user@example.com USER@foo.COM A_US-ER@foo.bar.org
+                         first.last@foo.jp alice+bob@baz.cn]
+    valid_addresses.each do |valid_address|
+      @user.email = valid_address
+      assert @user.valid?, "#{valid_address.inspect} should be valid"
+    end
   end
 
   test "email validation should reject invalid addresses" do
@@ -90,15 +100,15 @@ class UserTest < ActiveSupport::TestCase
     michael = users(:michael)
     archer  = users(:archer)
     lana    = users(:lana)
-    # フォローしているユーザーの投稿を確認
+    # Posts from followed user
     lana.microposts.each do |post_following|
       assert michael.feed.include?(post_following)
     end
-    # 自分自身の投稿を確認
+    # Posts from self
     michael.microposts.each do |post_self|
       assert michael.feed.include?(post_self)
     end
-    # フォローしていないユーザーの投稿を確認
+    # Posts from unfollowed user
     archer.microposts.each do |post_unfollowed|
       assert_not michael.feed.include?(post_unfollowed)
     end

@@ -71,16 +71,15 @@ private
                                 :password_confirmation)
   end
 
+  # Before filters
 
-  # beforeアクション
-
-  # 正しいユーザーかどうか確認
+    # Confirms the correct user.
   def correct_user
     @user = User.find(params[:id])
     redirect_to(root_url) unless current_user?(@user)
   end
 
-  # 管理者かどうか確認
+    # Confirms an admin user.
   def admin_user
     redirect_to(root_url) unless current_user.admin?
   end

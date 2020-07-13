@@ -51,17 +51,17 @@ class User < ApplicationRecord
     update_attribute(:remember_digest, nil)
   end
 
-  # アカウントを有効にする
+  # Activates an account.
   def activate
     update_columns(activated: true, activated_at: Time.zone.now)
   end
 
-  # 有効化用のメールを送信する
+  # Sends activation email.
   def send_activation_email
     UserMailer.account_activation(self).deliver_now
   end
 
-  # パスワード再設定の属性を設定する
+  # Sets the password reset attributes.
   def create_reset_digest
     self.reset_token = User.new_token
     # update_attribute(:reset_digest,  User.digest(reset_token))
@@ -70,16 +70,17 @@ class User < ApplicationRecord
 
   end
 
-  # パスワード再設定のメールを送信する
+  # Sends password reset email.
   def send_password_reset_email
     UserMailer.password_reset(self).deliver_now
   end
 
-  # パスワード再設定の期限が切れている場合はtrueを返す
+  # Returns true if a password reset has expired.
   def password_reset_expired?
     reset_sent_at < 2.hours.ago
   end
 
+  # Returns a user's status feed.
   def feed
     <<-DOC 
     # Micropost.where("user_id = ?", id)
@@ -110,17 +111,17 @@ class User < ApplicationRecord
 
   end
 
-  # ユーザーをフォローする
+  # Follows a user.
   def follow(other_user)
     following << other_user
   end
 
-  # ユーザーをフォロー解除する
+  # Unfollows a user.
   def unfollow(other_user)
-    active_relationships.find_by(followed_id: other_user.id).destroy
+    following.delete(other_user)
   end
 
-  # 現在のユーザーがフォローしてたらtrueを返す
+  # Returns true if the current user is following the other user.
   def following?(other_user)
     following.include?(other_user)
   end

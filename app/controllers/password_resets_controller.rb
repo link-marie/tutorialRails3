@@ -25,9 +25,9 @@ class PasswordResetsController < ApplicationController
 
   def update
     if params[:user][:password].empty?
-      @user.errors.add(:password, :blank)
+      @user.errors.add(:password, "can't be empty")
       render 'edit'
-    elsif @user.update_attributes(user_params)
+    elsif @user.update(user_params)
       log_in @user
       @user.update_attribute(:reset_digest, nil)
       flash[:success] = "Password has been reset."
@@ -36,16 +36,20 @@ class PasswordResetsController < ApplicationController
       render 'edit'
     end
   end
+
 private
+
   def user_params
     params.require(:user).permit(:password, :password_confirmation)
   end
+
+    # Before filters
 
   def get_user
     @user = User.find_by(email: params[:email])
   end
 
-  # 正しいユーザーかどうか確認する
+    # Confirms a valid user.
   def valid_user
     unless (@user && @user.activated? &&
             @user.authenticated?(:reset, params[:id]))
@@ -53,7 +57,7 @@ private
     end
   end
 
-  # トークンが期限切れかどうか確認する
+    # Checks expiration of reset token.
   def check_expiration
     if @user.password_reset_expired?
       flash[:danger] = "Password reset has expired."
