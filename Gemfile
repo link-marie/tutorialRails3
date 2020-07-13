@@ -5,12 +5,12 @@ ruby '2.7.0'
 
 gem 'rails', '~> 6.0.3', '>= 6.0.3.2'
 # High-level image processing wrapper for libvips and ImageMagick/GraphicsMagick
-# gem 'image_processing', '~> 1.2'
+gem 'image_processing',           '1.11.0'
 # ImageMagick interface
 # gem 'mini_magick',             '4.9.5'
-# gem 'active_storage_validations', '0.8.2'
+gem 'active_storage_validations', '0.8.2'
 # hash algorithm
-gem 'bcrypt',         '3.1.12'
+gem 'bcrypt',                     '3.1.13'
 # Generate fake data
 gem 'faker',          '2.13.0'
 # Pagination library
@@ -34,8 +34,6 @@ gem 'bootsnap', '>= 1.4.2', require: false
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
-
-gem 'carrierwave', '~> 2.0'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.4'

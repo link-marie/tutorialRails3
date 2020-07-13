@@ -18,25 +18,18 @@ class MicropostsInterfaceTest < ActionDispatch::IntegrationTest
       post microposts_path, params: { micropost: { content: "" } }
     end
     assert_select 'div#error_explanation'
+    assert_select 'a[href=?]', '/?page=2'  # Correct pagination link
 
     # Valid submission
     content = "This micropost really ties the room together"
     
     # fixtureで定義されたファイルをアップロードする
-    picture = fixture_file_upload('test/fixtures/rails.png', 'image/png')
-    assert_difference 'Micropost.count', 1 do
-      post microposts_path, params: { micropost:
-                                      { content: content,
-                                        picture: picture } }
-    end
-    assert assigns(:micropost).picture?
-
     image = fixture_file_upload('kitten.jpg', 'image/jpeg')
     assert_difference 'Micropost.count', 1 do
       post microposts_path, params: { micropost: { content: content,
                                                    image:   image } }
     end
-    # assert assigns(:micropost).image.attached?
+    assert assigns(:micropost).image.attached?
     follow_redirect!
     assert_match content, response.body
     # Delete a post.
