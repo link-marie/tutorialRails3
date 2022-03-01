@@ -6,7 +6,7 @@ ruby '2.7.0'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails',                      '~> 6.0.3', '>= 6.0.3.2'
 # High-level image processing wrapper for libvips and ImageMagick/GraphicsMagick
-gem 'image_processing',           '1.11.0'
+gem 'image_processing',           '1.12.2'
 # ImageMagick interface, included by image_processing
 # gem 'mini_magick',              '4.9.5'
 gem 'active_storage_validations', '0.8.2'
